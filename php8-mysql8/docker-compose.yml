@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  app:
+    container_name: saiyou
+    build: ./Docker/app
+    ports:
+      - "8888:80"
+    volumes:
+      - ./src:/var/www/html
+
+  db:
+    container_name: (プロジェクト名)_db
+    build: ./Docker/db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_USER: (プロジェクト名)-user
+      MYSQL_PASSWORD: (プロジェクト名)-pass
+      MYSQL_DATABASE: (プロジェクト名)
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ./Docker/DB/volume:/var/lib/mysql
+      - ./Docker/DB/my.cnf:/etc/mysql/conf.d/my.cnf
+    ports:
+      - 8889:3306
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_HOSTS=db
+      - PMA_USER=root
+      - PMA_PASSWORD=rootpass
+    ports:
+      - 8890:80
